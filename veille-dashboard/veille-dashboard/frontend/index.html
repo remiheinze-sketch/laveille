@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard de veille multi-onglets">
+  <title>Dashboard de Veille</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- En-tête principal -->
+  <header class="app-header">
+    <div class="header-content">
+      <h1 class="app-title">📈 Dashboard de Veille</h1>
+      <div class="header-actions">
+        <button id="btn-export" class="btn btn--secondary" aria-label="Exporter les données">
+          💾 Exporter
+        </button>
+        <button id="btn-report" class="btn btn--secondary" aria-label="Générer un rapport email">
+          📧 Rapport
+        </button>
+        <button id="btn-add-manual" class="btn btn--primary" aria-label="Ajouter un élément manuel">
+          ➕ Ajouter
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation par onglets -->
+  <nav class="tabs-nav" role="tablist" aria-label="Navigation principale">
+    <button id="tab-budget" class="tab-btn" role="tab" aria-selected="true" aria-controls="panel-budget" data-tab="budget">
+      <span class="tab-icon">📊</span>
+      <span class="tab-label">Budget 2026 &amp; PLFSS</span>
+      <span class="tab-badge" id="badge-budget">0</span>
+    </button>
+    <button id="tab-metz" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-metz" data-tab="metz">
+      <span class="tab-icon">🏛️</span>
+      <span class="tab-label">Metz</span>
+      <span class="tab-badge" id="badge-metz">0</span>
+    </button>
+    <button id="tab-social" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-social" data-tab="social">
+      <span class="tab-icon">👥</span>
+      <span class="tab-label">Réseaux sociaux</span>
+      <span class="tab-badge" id="badge-social">0</span>
+    </button>
+  </nav>
+
+  <!-- Conteneur principal avec sidebar et contenu -->
+  <main class="app-main">
+    <!-- Sidebar avec filtres -->
+    <aside class="sidebar" role="complementary">
+      <div class="sidebar-section">
+        <h2 class="sidebar-title">🔍 Recherche</h2>
+        <input type="search" id="search-input" class="form-control" placeholder="Rechercher..." aria-label="Rechercher dans les contenus">
+      </div>
+
+      <div class="sidebar-section">
+        <h2 class="sidebar-title">📌 Actions rapides</h2>
+        <button id="btn-mark-all-read" class="btn btn--outline btn--full-width">
+          ✓ Tout marquer comme lu
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <h2 class="sidebar-title">📅 Période</h2>
+        <div class="filter-group">
+          <label class="filter-option">
+            <input type="radio" name="date-filter" value="all" checked>
+            <span>Tout afficher</span>
+          </label>
+          <label class="filter-option">
+            <input type="radio" name="date-filter" value="24h">
+            <span>Dernières 24h</span>
+          </label>
+          <label class="filter-option">
+            <input type="radio" name="date-filter" value="7d">
+            <span>7 derniers jours</span>
+          </label>
+          <label class="filter-option">
+            <input type="radio" name="date-filter" value="30d">
+            <span>30 derniers jours</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="sidebar-section" id="sources-section">
+        <h2 class="sidebar-title">📰 Sources</h2>
+        <div id="sources-filters" class="filter-group">
+          <!-- Généré dynamiquement -->
+        </div>
+      </div>
+
+      <div class="sidebar-section" id="tags-section">
+        <h2 class="sidebar-title">🏷️ Tags</h2>
+        <div id="tags-filters" class="filter-pills">
+          <!-- Généré dynamiquement -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Zone de contenu principal -->
+    <section class="content" role="main">
+      <div class="content-header">
+        <div class="content-info">
+          <h2 id="content-title" class="content-title">Chargement...</h2>
+          <p id="content-stats" class="content-stats">0 résultat(s)</p>
+        </div>
+        <div class="content-sort">
+          <label for="sort-select" class="sr-only">Trier par</label>
+          <select id="sort-select" class="form-control">
+            <option value="date-desc">Plus récent d'abord</option>
+            <option value="date-asc">Plus ancien d'abord</option>
+            <option value="title-asc">Titre (A-Z)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="items-container" class="items-grid" role="region" aria-live="polite" aria-label="Liste des contenus">
+        <!-- Cartes générées dynamiquement -->
+      </div>
+
+      <div id="pagination" class="pagination" role="navigation" aria-label="Pagination">
+        <!-- Pagination générée dynamiquement -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Zone de toasts/notifications -->
+  <div id="toast-container" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Modale Export -->
+  <div id="modal-export" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-export-title" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-export-title" class="modal-title">💾 Exporter les données</h2>
+        <button class="modal-close" aria-label="Fermer">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Exporter <strong id="export-count">0</strong> élément(s) de l'onglet actuel.</p>
+        <div class="modal-actions">
+          <button id="btn-export-csv" class="btn btn--primary">Télécharger CSV</button>
+          <button id="btn-export-json" class="btn btn--secondary">Télécharger JSON</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale Rapport Email -->
+  <div id="modal-report" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-report-title" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-report-title" class="modal-title">📧 Rapport Email</h2>
+        <button class="modal-close" aria-label="Fermer">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="report-to" class="form-label">À :</label>
+          <input type="email" id="report-to" class="form-control" placeholder="destinataire@example.com">
+        </div>
+        <div class="report-preview">
+          <h3>Aperçu du rapport</h3>
+          <p><strong>Onglet :</strong> <span id="report-tab">-</span></p>
+          <p><strong>Nombre d'éléments :</strong> <span id="report-count">0</span></p>
+          <p><strong>Top 5 contenus :</strong></p>
+          <ul id="report-items" class="report-items-list"></ul>
+        </div>
+        <div class="modal-actions">
+          <button id="btn-generate-mailto" class="btn btn--primary">✉️ Générer brouillon</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale Ajouter Manuellement -->
+  <div id="modal-add" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-add-title" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-add-title" class="modal-title">➕ Ajouter un élément</h2>
+        <button class="modal-close" aria-label="Fermer">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-add-item">
+          <div class="form-group">
+            <label for="add-title" class="form-label">Titre *</label>
+            <input type="text" id="add-title" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="add-url" class="form-label">URL *</label>
+            <input type="url" id="add-url" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="add-summary" class="form-label">Résumé</label>
+            <textarea id="add-summary" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="add-source" class="form-label">Source *</label>
+            <input type="text" id="add-source" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="add-tags" class="form-label">Tags (séparés par des virgules)</label>
+            <input type="text" id="add-tags" class="form-control" placeholder="tag1, tag2, tag3">
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn--primary">Ajouter</button>
+            <button type="button" class="modal-close btn btn--outline">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
