@@ -1,0 +1,23 @@
+app:
+  baseUrl: "http://localhost:3000"
+  apiKey: "CHANGE_ME"
+tabs:
+  - key: "budget"
+    title: "Budget 2026 & PLFSS"
+    sources: []
+    keywords: ["PLF 2026", "PLFSS 2026", "budget 2026"]
+  - key: "metz"
+    title: "Metz"
+    sources: []
+    keywords: ["maire de Metz", "Ville de Metz"]
+  - key: "social"
+    title: "Réseaux sociaux"
+    people: []
+ingestion:
+  schedule: "*/15 * * * *"
+  userAgent: "VeilleBot/1.0"
+reports:
+  daily:
+    time: "07:30"
+    to: ["toi@example.com"]
+    tabs: ["budget","metz","social"]
