@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 20
       - name: Install tools deps
-        run: npm i fast-xml-parser
+          run: npm i fast-xml-parser he
       - name: Run ingestion
         run: node tools/ingest.mjs
       - name: Commit updated JSON
