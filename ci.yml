@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate HTML
+        uses: Cyb3r-Jak3/html5validator-action@v7
+        with:
+          root: frontend
+          css: true
+          log_level: INFO
+      - name: Lint JS (eslint via npx)
+        run: |
+          npm i -g eslint@9
+          npx eslint "frontend/**/*.js" --no-eslintrc --env browser --parser-options ecmaVersion:2021 || true
+      - name: Stylelint (CSS)
+        run: |
+          npm i -g stylelint stylelint-config-standard
+          printf '{ "extends": "stylelint-config-standard" }\n' > .stylelintrc.json
+          npx stylelint "frontend/**/*.css" || true
+  pages:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
