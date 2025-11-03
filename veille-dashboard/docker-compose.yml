@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  database:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: veille
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  server:
+    build: .
+    env_file:
+      - server/.env.example
+    environment:
+      - PGHOST=database
+      - PGPORT=5432
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=veille
+      - API_KEY=CHANGE_ME
+      - CORS_ORIGIN=*
+    depends_on:
+      - database
+    ports:
+      - "3000:3000"
+
+volumes:
+  dbdata:
