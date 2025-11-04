@@ -30,7 +30,7 @@ function savePinned() {
   localStorage.setItem("pinned", JSON.stringify([...pinnedSet]));
 }
 
-// Formattage des dates
+// Formatage des dates
 function formatDate(iso) {
   try {
     const d = new Date(iso);
@@ -54,7 +54,7 @@ function togglePin(id) {
 /* ------------------------------ Rendu HTML ------------------------------ */
 
 function renderItems(items) {
-  const container = document.getElementById('itemsContainer');
+  const container = document.getElementById('items-container');
   container.innerHTML = '';
 
   if (!items.length) {
