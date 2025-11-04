@@ -54,7 +54,7 @@ function togglePin(id) {
 /* ------------------------------ Rendu HTML ------------------------------ */
 
 function renderItems(items) {
-  const container = document.getElementById('itemsContainer');
+  const container = document.getElementById('items-container');
   container.innerHTML = '';
 
   if (!items.length) {
