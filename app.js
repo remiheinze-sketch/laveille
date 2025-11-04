@@ -30,7 +30,7 @@ function savePinned() {
   localStorage.setItem("pinned", JSON.stringify([...pinnedSet]));
 }
 
-// Formattage des dates
+// Formatage des dates
 function formatDate(iso) {
   try {
     const d = new Date(iso);
